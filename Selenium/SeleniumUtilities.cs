@@ -11,6 +11,8 @@ using OpenQA.Selenium.Support.UI;
 using RobotBase.Utilidades;
 using OpenQA.Selenium.Interactions;
 using static RobotBase.Utilidades.ConstantsSelenium;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace RobotBase.Utilidades
 {
@@ -48,6 +50,10 @@ namespace RobotBase.Utilidades
         public void Type(By locator, string text)
         {
             Driver.FindElement(locator).SendKeys(text);
+        }
+        public void AbrirNuevaPestaña()
+        {
+            ((IJavaScriptExecutor)Driver).ExecuteScript("window.open();");
         }
         public void WaitAndType( By locator, string text, int seconds)
         {
@@ -91,6 +97,12 @@ namespace RobotBase.Utilidades
             Actions actions = new Actions(Driver);
             actions.MoveToElement(element).Click().Build().Perform();
         }
+        public void MoveToElement(By locator)
+        {
+            IWebElement element = Driver.FindElement(locator);
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
+            js.ExecuteScript("arguments[0].scrollIntoView()", element);
+        }
         public void MoveToElementAndClick(By locator)
         {
             IWebElement element = Driver.FindElement(locator);
@@ -110,6 +122,12 @@ namespace RobotBase.Utilidades
             IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
             js.ExecuteScript("document.getElementById('"+id+"').click()");
 
+        }
+        public void Click(IWebElement element)
+        {
+            WebDriverWait wait = NewWait(60);
+            wait.Until(d => element.Displayed);
+            element.Click();
         }
         public void ClickJs(By locator)
         {
@@ -134,12 +152,7 @@ namespace RobotBase.Utilidades
             wait.Until(d=>d.FindElement(locator).Displayed);
             return Driver.FindElement(locator).Text.Trim();
         }
-        public void Click(IWebElement element)
-        {
-            WebDriverWait wait = NewWait(60);
-            wait.Until(d => element.Displayed);
-            element.Click();
-        }
+
         public void WaitShadeDisapear()
         {
             var wait = NewWait(60);

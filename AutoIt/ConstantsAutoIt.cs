@@ -13,7 +13,6 @@ namespace P05B03.AutoIT
         public string CarpetaImagenesAutoit { get; private set; }
         public string NombreAPPbuscarImagen { get; private set; }
         public string NombreAPPArea { get; private set; }
-
         public enum Click
         {
             LEFT,
@@ -29,6 +28,13 @@ namespace P05B03.AutoIT
             this.NombreAPPbuscarImagen = nombreAPPbuscarImagen;
             this.NombreAPPArea = nombreAPPbuscarImagenArea;
         }
-
+        public Dictionary<string, string> AreaOrigen = new Dictionary<string, string>
+        {
+            { "SOPORTE CANALES", "soporte_canales.png" }
+        };
+        public Dictionary<string, string> ORIGEN_TICKET = new Dictionary<string, string> 
+        {
+            {"EMAIL", "2"}
+        }; 
     }
 }

@@ -15,5 +15,10 @@ namespace RobotBase.Utilidades
             this.IdOperacionAsignado = IdOperacionAsignado;
             this.IdProceso = IdProceso;
         }
+        public void AloeActualizarEstado(string nombreEstado, string msg)
+        {
+            int idEstado = RecuperaEstado(nombreEstado, Constant.AE_CASO, IdProceso.ToString());
+            ActualizaEstadoCaso(idEstado, msg);
+        }
     }
 }

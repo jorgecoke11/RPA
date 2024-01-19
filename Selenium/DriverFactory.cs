@@ -58,7 +58,7 @@ namespace RobotBase.Utilidades
                         options.SetPreference("browser.download.dir", ""); // Configura la ubicación de la carpeta de descarga
                         //options.SetPreference("browser.helperApps.neverAsk.saveToDisk", Constant.APP); // Indica los archivos o el tipo MIME que se guardan automáticamente
                         options.SetPreference("pdfjs.disabled", true); // Deshabilita el visor PDF por defecto incorporado por el navegador(PDF.js)
-                        driver = new FirefoxDriver(options);
+                        driver = new FirefoxDriver( options);
                         break;
                 }
                 return driver;
@@ -66,7 +66,6 @@ namespace RobotBase.Utilidades
             {
                 Console.WriteLine("No se ha podido inicializar el driver " + Environment.NewLine + ex.Message);
                 throw new Exception("No se ha podido inicializar el driver " + Environment.NewLine + ex.Message);
-                
             }
         }
     }
