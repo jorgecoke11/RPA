@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RobotBase.Pages;
 using Newtonsoft.Json.Linq;
+using P01_B03.Models;
 
 namespace RobotBase.Utilidades
 {
@@ -15,22 +16,22 @@ namespace RobotBase.Utilidades
         private IWebDriver driver;
         private SeleniumUtilities su;
         private AloeUtilities aloe;
-        private JObject jo;
-        public BasePage(SeleniumUtilities su, AloeUtilities aloe, JObject jo) {
+        private IBusinessModel business_model;
+        public BasePage(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model) {
 
-            Set(su, aloe, jo);
+            Set(su, aloe, business_model);
         }
         public IWebDriver Driver => driver;
         public SeleniumUtilities Su => su;
         public AloeUtilities Aloe => aloe;
-        public JObject Jo => jo;
+        public IBusinessModel Business_model => business_model;
 
-        public void Set(SeleniumUtilities su, AloeUtilities aloe, JObject jo)
+        public void Set(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model)
         {
             this.driver = su.Driver;
             this.su = su;
             this.aloe = aloe;
-            this.jo = jo;
+            this.business_model = business_model;
         }
     }
 }
