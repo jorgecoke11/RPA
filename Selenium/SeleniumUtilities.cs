@@ -11,8 +11,7 @@ using OpenQA.Selenium.Support.UI;
 using RobotBase.Utilidades;
 using OpenQA.Selenium.Interactions;
 using static RobotBase.Utilidades.ConstantsSelenium;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Bibliography;
+using OpenQA.Selenium.Support.Extensions;
 
 namespace RobotBase.Utilidades
 {
@@ -129,8 +128,14 @@ namespace RobotBase.Utilidades
             wait.Until(d => element.Displayed);
             element.Click();
         }
+        public void DoubleClick(IWebElement element)
+        {
+            Driver.ExecuteJavaScript("arguments[0].dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));", element);
+        }
         public void ClickJs(By locator)
         {
+            WebDriverWait wait = NewWait(60);
+            wait.Until(d=> d.FindElement(locator).Displayed);
             IJavaScriptExecutor jse = (IJavaScriptExecutor)Driver;
             var element = Driver.FindElement(locator);
             jse.ExecuteScript("arguments[0].click();", element);
@@ -321,11 +326,11 @@ namespace RobotBase.Utilidades
             wait.Until(d=>d.FindElement(locator).Displayed);
             return Driver.FindElements(locator).FirstOrDefault(o => o.Text.Contains(opcion));
         }
-        public void SelectOptionFromSelect(By locator, By locatorOption, string option, int seconds)
+        public void SelectOptionFromSelect(By locatorSelect, By locatorOption, string option, int seconds)
         {
-            Click(locator);
+            Click(locatorSelect);
             IWebElement optionElement = GetOpcionElemento(locatorOption, option, seconds);
-            SelectElement select = new SelectElement(Driver.FindElement(locator));
+            SelectElement select = new SelectElement(Driver.FindElement(locatorSelect));
             ClickSelectOption(select, optionElement);
         }
         public bool EsperarAlerta(int seconds)

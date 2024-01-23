@@ -18,6 +18,21 @@ namespace P01B05.F.Utilidades
             // Filtrar los caracteres que no son letras básicas ASCII
             return new string(normalizedString.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray());
         }
+        public static DateTime StringToDateTime(string cadenaFecha, string format)
+        {
+            if(DateTime.TryParseExact(cadenaFecha, format, null, System.Globalization.DateTimeStyles.None, out DateTime fecha))
+            {
+                return fecha;
+            }
+            else
+            {
+                return DateTime.MinValue;
+            }
+        }
+        public static string DateTimeToString(DateTime fecha, string format)
+        {
+            return fecha.ToString(format);
+        }
         public static void MatarProcesos(string proceso)
         {
             Process[] procesos = Process.GetProcessesByName(proceso);

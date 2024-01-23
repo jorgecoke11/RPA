@@ -25,7 +25,7 @@ namespace RobotBase.Utilidades
                 switch (navegador)
                 {
                     case ConstantsSelenium.NAVEGADOR.EDGE:
-                        InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService(@"C:\Users\jlopez.carnero\Desktop\ASISA\IEDriverServer.exe");
+                        InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
                         
                         InternetExplorerOptions optionsEdge = new InternetExplorerOptions();
                         optionsEdge.AttachToEdgeChrome = true;
