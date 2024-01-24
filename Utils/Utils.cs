@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace P01B05.F.Utilidades
+namespace RobotBase.Utilidades
 {
     public static class Utils
     {
@@ -66,6 +66,14 @@ namespace P01B05.F.Utilidades
             {
                 Console.WriteLine($"Error al intentar eliminar el archivo: {ex.Message}");
             }
+        }
+        public static bool FileExists(string path)
+        {
+            if (File.Exists(path))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
