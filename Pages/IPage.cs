@@ -11,5 +11,6 @@ namespace RobotBase.Pages
     public interface IPage
     {
         void Set(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model);
+        void Set(SeleniumUtilities su, AloeUtilities aloe)
     }
 }

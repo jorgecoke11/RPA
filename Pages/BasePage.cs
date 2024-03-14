@@ -17,9 +17,15 @@ namespace RobotBase.Utilidades
         private SeleniumUtilities su;
         private AloeUtilities aloe;
         private IBusinessModel business_model;
-        public BasePage(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model) {
-
-            Set(su, aloe, business_model);
+        public BasePage(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model = null) {
+            if (business_model != null)
+            {
+                Set(su, aloe, business_model);
+            }
+            else
+            {
+                Set(su, aloe);
+            }
         }
         public IWebDriver Driver => driver;
         public SeleniumUtilities Su => su;
@@ -31,7 +37,10 @@ namespace RobotBase.Utilidades
             this.driver = su.Driver;
             this.su = su;
             this.aloe = aloe;
-            this.business_model = business_model;
+            if (business_model != null)
+            {
+                this.business_model = business_model;
+            }
         }
     }
 }
