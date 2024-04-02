@@ -12,13 +12,23 @@ namespace RobotBase.Utilidades
         {
             FIREFOX,
             CHROME,
-            EDGE
+            EDGE,
+            EXPLORER
         }
         public enum TipoBusqueda
         {
             ID,
             XPATH,
             CSS
+        }
+        public enum KeysSelenium
+        {
+            ESCAPE
+        }
+        public enum TipoWait
+        {
+            DISPLAYED,
+            ENABLED
         }
     }
 }

@@ -24,7 +24,7 @@ namespace RobotBase.Utilidades
                 IWebDriver driver = null;
                 switch (navegador)
                 {
-                    case ConstantsSelenium.NAVEGADOR.EDGE:
+                    case ConstantsSelenium.NAVEGADOR.EXPLORER:
                         InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
                         
                         InternetExplorerOptions optionsEdge = new InternetExplorerOptions();
@@ -60,6 +60,8 @@ namespace RobotBase.Utilidades
                         options.SetPreference("pdfjs.disabled", true); // Deshabilita el visor PDF por defecto incorporado por el navegador(PDF.js)
                         driver = new FirefoxDriver( options);
                         break;
+                    default:
+                        throw new Exception("Navegador no contemplado");
                 }
                 return driver;
             }catch (Exception ex)

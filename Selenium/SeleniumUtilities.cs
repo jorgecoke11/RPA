@@ -12,6 +12,7 @@ using RobotBase.Utilidades;
 using OpenQA.Selenium.Interactions;
 using static RobotBase.Utilidades.ConstantsSelenium;
 using OpenQA.Selenium.Support.Extensions;
+using System.Web.ModelBinding;
 
 namespace RobotBase.Utilidades
 {
@@ -21,6 +22,7 @@ namespace RobotBase.Utilidades
         private List<string> listaVentanas;
         private ConstantsSelenium.NAVEGADOR navegador;
         private string ultimaVentana;
+        private int numVentanasAbiertas = 0;
         private const int TIEMPO_ESPERA = 60;
         public SeleniumUtilities(ConstantsSelenium.NAVEGADOR navegador) 
         {
@@ -29,6 +31,39 @@ namespace RobotBase.Utilidades
         public void StartDriver()
         {
             Driver = DriverFactory.SetDriver(navegador);
+            listaVentanas = new List<string>(Driver.WindowHandles);
+            ultimaVentana = listaVentanas.Last();
+            numVentanasAbiertas = listaVentanas.Count;
+        }
+        public void PressKey(ConstantsSelenium.KeysSelenium key)
+        {
+            Actions actions = new Actions(Driver);
+            switch (key)
+            {
+                case ConstantsSelenium.KeysSelenium.ESCAPE:
+                    actions.SendKeys(Keys.Escape).Build().Perform();
+                    break;
+            }
+        }
+        public void UpdateListaVentanasYSwitch()
+        {
+            listaVentanas = new List<string>(Driver.WindowHandles);
+            Stopwatch wath = new Stopwatch();
+            wath.Start();
+            while (listaVentanas.Last() == ultimaVentana && wath.ElapsedMilliseconds < TIEMPO_ESPERA * 1000)
+            {
+                listaVentanas = new List<string>(Driver.WindowHandles);
+                Thread.Sleep(1000);
+            }
+            if (listaVentanas.Last () == ultimaVentana || wath.ElapsedMilliseconds > (TIEMPO_ESPERA * 1000))
+            {
+                throw new Exception("No se ha abierto correctamente la ventana de GRECO");
+            }
+            wath.Stop();
+            ultimaVentana = listaVentanas.Last();
+            numVentanasAbiertas = listaVentanas.Count;
+            Driver.SwitchTo().Window(listaVentanas.Last());
+            Thread.Sleep(2000);
             listaVentanas = new List<string>(Driver.WindowHandles);
         }
         public void CleanAndType(By locator, string text)
@@ -45,16 +80,29 @@ namespace RobotBase.Utilidades
             CleanJS(locator);
             Driver.FindElement(locator).SendKeys(text);
         }
-        public void Type(By locator, string text)
+        public void Type(By locator, string text, TipoWait tipoWait = TipoWait.DISPLAYED)
         {
+            Wait(locator, tipoWait);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
             Driver.FindElement(locator).SendKeys(text);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
         }
-        public void TypeJs(By locator, string text)
+        public void TypeJs(By locator, string text, TipoWait tipoWait = TipoWait.DISPLAYED)
         {
-            WebDriverWait wait = NewWait(TIEMPO_ESPERA);
-            wait.Until(d => d.FindElement(locator).Displayed);
+            Wait(locator, tipoWait);
             IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)Driver;
+            Thread.Sleep(1000);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
             jsExecutor.ExecuteScript("arguments[0].value = '" + text + "';", Driver.FindElement(locator));
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
+        }
+        public void TypeTextContent(IWebElement element, string text, TipoWait tipoWait = TipoWait.DISPLAYED)
+        {
+            IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)Driver;
+            Thread.Sleep(1000);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
+            jsExecutor.ExecuteScript("arguments[0].innerText = arguments[1];", element, text);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
         }
         public void AbrirNuevaPestaña()
         {
@@ -70,16 +118,18 @@ namespace RobotBase.Utilidades
         {
             IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)Driver;
             var element = Driver.FindElement(locator);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
             jsExecutor.ExecuteScript("arguments[0].value = '';", element);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
         }
         public WebDriverWait NewWait(double seconds)
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(seconds));
-            wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
             wait.IgnoreExceptionTypes(typeof(ElementNotInteractableException));
             wait.IgnoreExceptionTypes(typeof(ElementNotVisibleException));
             wait.IgnoreExceptionTypes(typeof(ElementNotSelectableException));
             wait.IgnoreExceptionTypes(typeof(ElementClickInterceptedException));
+            wait.IgnoreExceptionTypes(typeof(InvalidSelectorException));
             return wait;
         }
         public void WaitAndClick(By locator, int seconds)
@@ -124,30 +174,65 @@ namespace RobotBase.Utilidades
         {
             WebDriverWait wait = NewWait(TIEMPO_ESPERA);
             wait.Until(d => element.Displayed);
+            Thread.Sleep(1000);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
             element.Click();
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
         }
         public void DoubleClickJs(IWebElement element)
         {
             Driver.ExecuteJavaScript("arguments[0].dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));", element);
         }
-        public void ClickJs(By locator)
+        public void ClickJs(By locator, TipoWait tipoWait = TipoWait.DISPLAYED)
         {
-            WebDriverWait wait = NewWait(TIEMPO_ESPERA);   
-            wait.Until(d=> d.FindElement(locator).Displayed);
+            Wait(locator, tipoWait);
             IJavaScriptExecutor jse = (IJavaScriptExecutor)Driver;
             var element = Driver.FindElement(locator);
+            Thread.Sleep(1000);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
             jse.ExecuteScript("arguments[0].click();", element);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
+        }
+        public void Wait(By locator, TipoWait tipoWait)
+        {
+            WebDriverWait wait = NewWait(TIEMPO_ESPERA);
+            switch (tipoWait)
+            {
+                case TipoWait.DISPLAYED:
+                    wait.Until(d => d.FindElement(locator).Displayed);
+                    break;
+                case TipoWait.ENABLED:
+                    wait.Until(d => d.FindElement(locator).Enabled);
+                    break;
+            }
+        }
+        public IWebElement GetWebElement(By locator, TipoWait tipoWait = TipoWait.DISPLAYED)
+        {
+            Wait(locator, tipoWait);
+            return Driver.FindElement(locator);
+        }
+        public void ClickActions(By locator)
+        {
+            WebDriverWait wait = NewWait(TIEMPO_ESPERA);
+            wait.Until(d => d.FindElement(locator).Displayed);
+            Actions actions = new Actions(Driver);
+            IWebElement element = Driver.FindElement(locator);
+            actions.Click(element).Build().Perform();
         }
         public void ClickJs(IWebElement element)
         {
             IJavaScriptExecutor jse = (IJavaScriptExecutor)Driver;
+            Thread.Sleep(1000);
             jse.ExecuteScript("arguments[0].click();", element);
         }
         public void Click(By locator)
         {
             WebDriverWait wait = NewWait(TIEMPO_ESPERA);
             wait.Until(d => d.FindElement(locator).Displayed);
+            Thread.Sleep(1000);
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TIEMPO_ESPERA);
             Driver.FindElement(locator).Click();
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
         }
         public string GetTextElement(By locator)
         {
@@ -222,15 +307,15 @@ namespace RobotBase.Utilidades
         {
             Driver.Navigate().GoToUrl(url);
         }
-        public void SwithToIframe(string idFrame, double segundos)
+        public void SwithToIframe(By locator)
         {
 
 
-            WebDriverWait wait = NewWait(segundos);
+            WebDriverWait wait = NewWait(TIEMPO_ESPERA);
             // Esperar a que se inicie la sesión // 
-            EsperarElementoVisible(TipoBusqueda.ID, idFrame, segundos);
+            wait.Until(d => d.FindElement(locator).Displayed);
             // Cambiamos al frame que contiene el div de referencia
-            IWebElement iframe = Driver.FindElement(By.Id(idFrame));
+            IWebElement iframe = Driver.FindElement(locator);
             Driver.SwitchTo().Frame(iframe);
         }
         public void EsperarElementoNoVisible(TipoBusqueda tipo, string cadenaBusqueda, double segundos)
@@ -274,7 +359,7 @@ namespace RobotBase.Utilidades
                 watch.Start();
                 while (windows.Count < listaVentanas.Count() + 1 && watch.ElapsedMilliseconds < segundos * 1000)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1500);
                     windows = new List<string>(Driver.WindowHandles);
                 }
                 watch.Stop();
@@ -368,6 +453,16 @@ namespace RobotBase.Utilidades
                 Process[] procesos = Process.GetProcessesByName("firefox");
                 foreach (Process pro in procesos) { pro.Kill(); }
                 procesos = Process.GetProcessesByName("geckodriver");
+                foreach (Process pro in procesos) { pro.Kill(); }
+            }else if (navegador.Equals(NAVEGADOR.EXPLORER))
+            {
+                Process[] procesos = Process.GetProcessesByName("msedgewebview2");
+                foreach (Process pro in procesos) { pro.Kill(); }
+
+                procesos = Process.GetProcessesByName("msedge");
+                foreach (Process pro in procesos) { pro.Kill(); }
+
+                procesos = Process.GetProcessesByName("iexplorer");
                 foreach (Process pro in procesos) { pro.Kill(); }
             }
         }

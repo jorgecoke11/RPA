@@ -32,7 +32,7 @@ namespace P05B03.Utilidades
                                                   precision.ToString(), reintentos.ToString(), numClicks.ToString()};
             int x = 0;
             int y = 0;
-            if (!ConsoleUtilities.LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPbuscarImagen), arguments, ref x, ref y))
+            if (!LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPbuscarImagen), arguments, ref x, ref y))
             {
                 
                 throw new Exception("No se ha encontrado la imagen: "+ imagen);
@@ -78,7 +78,7 @@ namespace P05B03.Utilidades
             watch.Start();
             while (watch.ElapsedMilliseconds < seconds * 1000)
             {
-                if (ConsoleUtilities.LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPbuscarImagen), arguments, ref x, ref y))
+                if (LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPbuscarImagen), arguments, ref x, ref y))
                 {
                     LogUtilities.LogFin("Imagen: " + imagen + " encontrada -> " + x.ToString() + " - " + y.ToString());
                     return new CoordenadasImg(x, y, 0);
@@ -98,7 +98,7 @@ namespace P05B03.Utilidades
             watch.Start();
             while (watch.ElapsedMilliseconds < seconds * 1000)
             {
-                if (ConsoleUtilities.LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPbuscarImagen), arguments, ref x, ref y))
+                if (LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPbuscarImagen), arguments, ref x, ref y))
                 {
                     LogUtilities.LogFin("Imagen: " + imagen + " encontrada -> " + x.ToString() + " - " + y.ToString());
                     return new CoordenadasImg(x, y,0);
@@ -123,7 +123,7 @@ namespace P05B03.Utilidades
                     
                     string[] arguments = new string[8] { Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.CarpetaImagenesAutoit, imagen),
                                           precision.ToString(), "5", click.ToString(), px0.ToString(), py0Temp.ToString(), px1.ToString(), i.ToString()};
-                    if (ConsoleUtilities.LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPArea), arguments, ref x, ref y))
+                    if (LaunchProgramImg(Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.NombreAPPArea), arguments, ref x, ref y))
                     {
                         LogUtilities.LogFin("Imagen: " + imagen + " encontrada -> " + x.ToString() + " - " + y.ToString());
                
@@ -202,6 +202,45 @@ namespace P05B03.Utilidades
                 AutoIt.AutoItX.Send("{CTRLUP}");
                 AutoIt.AutoItX.Sleep(500);
             }
+        }
+        private static bool LaunchProgramImg(string program, string[] args, ref int px, ref int py)
+        {
+            try
+            {
+                string arguments = string.Empty;
+                for (int i = 0; i < args.Length; i++)
+                {
+                    arguments += "\"" + args[i] + "\" ";
+                }
+                System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
+                pProcess.StartInfo.FileName = program;
+                pProcess.StartInfo.Arguments = arguments;
+                pProcess.StartInfo.UseShellExecute = false;
+                pProcess.StartInfo.RedirectStandardOutput = true;
+                pProcess.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                pProcess.StartInfo.CreateNoWindow = true;
+                pProcess.Start();
+                string output = pProcess.StandardOutput.ReadToEnd();
+                pProcess.WaitForExit();
+                if (output.Trim().StartsWith("0 "))
+                {
+                    string[] coords = output.Trim().Split(' ');
+                    px = Int32.Parse(coords[1]);
+                    py = Int32.Parse(coords[2]);
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+
         }
     }
 }
