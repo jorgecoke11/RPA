@@ -30,5 +30,14 @@ namespace RobotBase.Utilidades
             DISPLAYED,
             ENABLED
         }
+        public enum TipoClick
+        {
+            SELENIUM,
+            JAVASCRIPT,
+            ACTIONS
+        }
+        public static int TIEMPO_ESPERA_DINAMICA = 180; //SEGUNDOS
+        public static int TIEMPO_ESPERA_ESTATICA = 1; //SEGUNDOS
+        public static int REINTENTOS = 3;
     }
 }

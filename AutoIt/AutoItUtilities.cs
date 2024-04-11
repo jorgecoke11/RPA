@@ -26,6 +26,24 @@ namespace P05B03.Utilidades
         {
             AutoIt.AutoItX.MouseMove(x, y);
         }
+        public void EsperarVentana(string claseVentana = "", string tituloVentana = "", int timeOut = 60)
+        {
+            try
+            {
+                if(claseVentana == "")
+                {
+                    AutoIt.AutoItX.WinWait(tituloVentana, "", timeOut);
+                }
+                else if(tituloVentana == "")
+                {
+                    AutoIt.AutoItX.WinWait(claseVentana, "", timeOut);
+                }
+            }
+            catch 
+            {
+                throw new Exception("No se ha podido encontrar la ventana: " + claseVentana + " - " + tituloVentana);
+            }
+        }
         public CoordenadasImg BuscaImagen(string imagen, int precision, int reintentos, int numClicks )
         {
             string [] arguments = new string[4] { Path.Combine(ca.CarpetaAppsAuxiliares, ca.CarpetaAppsAutoit, ca.CarpetaImagenesAutoit, imagen), 
