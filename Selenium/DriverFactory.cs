@@ -17,11 +17,11 @@ namespace RobotBase.Utilidades
 {
     public static class DriverFactory
     {
-        public static IWebDriver SetDriver(ConstantsSelenium.NAVEGADOR navegador)
+        public static IWebDriver SetDriver(ConstantsSelenium.NAVEGADOR navegador, string pathGecko)
         {
             try
             {
-                IWebDriver driver = null;
+                IWebDriver? driver = null;
                 switch (navegador)
                 {
                     case ConstantsSelenium.NAVEGADOR.EDGE:
@@ -51,20 +51,21 @@ namespace RobotBase.Utilidades
                         break;
                       
                     case ConstantsSelenium.NAVEGADOR.FIREFOX:
-                        FirefoxOptions options = new FirefoxOptions();
+                        FirefoxOptions? options = new FirefoxOptions();
+
                         options.AcceptInsecureCertificates = true;
-
                         options.SetPreference("browser.download.folderList", 2);
-
                         options.SetPreference("browser.download.manager.showWhenStarting", false);
-
+                        options.SetPreference("browser.download.panel.shown", false);
+                        options.SetPreference("browser.download.manager.useWindow", false);
+                        options.SetPreference("browser.download.dir", @"C:\Temporal");
                         options.SetPreference("browser.download.useDownloadDir", true);
-
-                        options.SetPreference("browser.helperApps.neverAsk.saveToDisk", Constant.APP);
-
+                        options.SetPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf;application/zip;application/x-compressed;application/x-zip-compressed;multipart/x-zip");
                         options.SetPreference("pdfjs.disabled", true); // disable the built-in PDF viewer
-                        driver = new FirefoxDriver(@"C:\Temporal", options);
+                        driver = new FirefoxDriver(pathGecko, options);
                         break;
+                    default:
+                        throw new Exception("Navegador no contemplado");
                 }
                 return driver;
             }catch (Exception ex)

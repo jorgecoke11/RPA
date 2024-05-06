@@ -12,8 +12,7 @@ using RobotBase.Utilidades;
 using OpenQA.Selenium.Interactions;
 using static RobotBase.Utilidades.ConstantsSelenium;
 using OpenQA.Selenium.Support.Extensions;
-using System.Web.ModelBinding;
-using OpenQA.Selenium.Html5;
+
 
 namespace RobotBase.Utilidades
 {
@@ -27,6 +26,7 @@ namespace RobotBase.Utilidades
         public SeleniumUtilities(ConstantsSelenium.NAVEGADOR navegador) 
         {
             this.navegador = navegador;
+            ultimaVentana = String.Empty;
         }
         public void StartDriver(string pathGecko)
         {
@@ -71,31 +71,23 @@ namespace RobotBase.Utilidades
         }
         public void CleanAndType(By locator, string text)
         {
-            try
-            {
+
                 WebDriverWait wait = NewWait(TIEMPO_ESPERA_DINAMICA);
                 wait.Until(d => d.FindElement(locator).Displayed);
                 Driver.FindElement(locator).Clear();
                 Driver.FindElement(locator).SendKeys(text);
 
-            }catch(Exception exc)
-            {
-                throw exc;
-            }
+
         }
         public void CleanAndTypeJS(By locator, string text)
         {
-            try
-            {
+
                 WebDriverWait wait = NewWait(TIEMPO_ESPERA_DINAMICA);
                 wait.Until(d => d.FindElement(locator).Displayed);
                 CleanJS(locator);
                 TypeJs(locator,text);
-            }
-            catch (Exception exc)
-            {
-                throw exc;
-            }
+            
+
 
         }
         public void Type(By locator, string text, TipoWait tipoWait = TipoWait.DISPLAYED)
@@ -150,16 +142,12 @@ namespace RobotBase.Utilidades
         }
         public void ScrollElementActions(By locator)
         {
-            try
-            {
+
                 IWebElement element = Driver.FindElement(locator);
                 Actions actions = new Actions(Driver);
                 actions.MoveToElement(element).Click().Build().Perform();
-            }
-            catch (Exception exc)
-            {
-                throw exc;
-            }
+            
+
         }
         public void MoveToElementJs(By locator, TipoWait tipoWait = TipoWait.DISPLAYED)
         {
@@ -171,51 +159,34 @@ namespace RobotBase.Utilidades
         }
         public void MoveToElementAndClickActions(By locator)
         {
-            try
-            {
+
                 IWebElement element = Driver.FindElement(locator);
                 Actions actions = new Actions(Driver);
                 actions.MoveToElement(element).Click().Build().Perform();
-            }catch(Exception exc)
-            {
-                throw exc;
-            }
+
 
         }
         public void MoveToElementByIdJs(string id)
         {
-            try
-            {
                 Wait(By.Id(id), TipoWait.DISPLAYED);
                 IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
                 js.ExecuteScript("document.getElementById('"+id+"').scrollIntoView();");
-            }catch(Exception exc)
-            {
-                throw new Exception($"No se ha podido hacer scroll hasta el elemento {id}", exc);   
-            }
+
         }
         public void Click(IWebElement element, TipoWait tipoWait = TipoWait.DISPLAYED)
         {
-            try
-            {
+
                 Wait(element, tipoWait);
                 Thread.Sleep(TIEMPO_ESPERA_ESTATICA * 1000);
                 element.Click();
-            }catch (Exception ex)
-            {
-                throw exc;
-            }
+
         }
         public void DoubleClickJs(IWebElement element)
         {
-            try
-            {
+
                 Driver.ExecuteJavaScript("arguments[0].dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));", element);
-            }
-            catch (Exception exc)
-            {
-                throw exc;
-            }
+            
+
         }
         public void ClickJs(By locator, TipoWait tipoWait = TipoWait.DISPLAYED)
         {
@@ -316,18 +287,11 @@ namespace RobotBase.Utilidades
         }
         public void ClickActions(By locator)
         {
-            try
-            {
                 WebDriverWait wait = NewWait(TIEMPO_ESPERA_DINAMICA);
                 wait.Until(d => d.FindElement(locator).Displayed);
                 Actions actions = new Actions(Driver);
                 IWebElement element = Driver.FindElement(locator);
-                actions.Click(element).Build().Perform();
-            }
-            catch(Exception exc)
-            {
-                throw new Exception("No se ha podido hacer click en: " + locator, exc);
-            }
+            actions.Click(element).Build().Perform();
         }
         public void ClickJs(IWebElement element)
         {

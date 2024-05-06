@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using RobotBase.Robots;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +12,11 @@ namespace RobotBase.Utilidades
 {
     public class BasePage : IPage
     {
-        private IWebDriver driver;
-        private SeleniumUtilities su;
-        private AloeUtilities aloe;
-        private IBusinessModel business_model;
-        public BasePage(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model = null) {
+        private IWebDriver driver = null!;
+        private SeleniumUtilities su = null!;
+        private AloeUtilities aloe = null!;
+        private IBusinessModel business_model = null!;
+        public BasePage(SeleniumUtilities su, AloeUtilities aloe, IBusinessModel business_model) {
             if (business_model != null)
             {
                 Set(su, aloe, business_model);
@@ -41,6 +40,12 @@ namespace RobotBase.Utilidades
             {
                 this.business_model = business_model;
             }
+        }
+        public void Set(SeleniumUtilities su, AloeUtilities aloe)
+        {
+            this.driver = su.Driver;
+            this.su = su;
+            this.aloe = aloe;
         }
     }
 }
