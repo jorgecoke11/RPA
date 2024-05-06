@@ -17,7 +17,7 @@ namespace RobotBase.Utilidades
 {
     public static class DriverFactory
     {
-        public static IWebDriver SetDriver(ConstantsSelenium.NAVEGADOR navegador, string pathGecko)
+        public static IWebDriver SetDriver(ConstantsSelenium.NAVEGADOR navegador)
         {
             try
             {
@@ -25,23 +25,45 @@ namespace RobotBase.Utilidades
                 switch (navegador)
                 {
                     case ConstantsSelenium.NAVEGADOR.EDGE:
-                       
+                        InternetExplorerDriverService service = InternetExplorerDriverService.CreateDefaultService();
+                        
+                        InternetExplorerOptions optionsEdge = new InternetExplorerOptions();
+                        optionsEdge.AttachToEdgeChrome = true;
+                        optionsEdge.IgnoreZoomLevel = true;
+                        optionsEdge.UnhandledPromptBehavior = UnhandledPromptBehavior.Ignore;// Necesario para que no cierre las alertas de forma automática 
+                        optionsEdge.EdgeExecutablePath = @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe";
+                        int intentos = 0;
+                        while (intentos < 10)
+                        {
+                            try
+                            {
+                                driver = new InternetExplorerDriver(service, optionsEdge);
+                                break; // Si tiene éxito, sal del bucle
+                            }
+                            catch (Exception ex)
+                            {
+                                intentos++;
+                                // Puedes registrar la excepción si lo deseas
+                                Console.WriteLine($"Intento {intentos} fallido. Excepción: {ex.Message}");
+                            }
+                        }
+                        
                         break;
                       
                     case ConstantsSelenium.NAVEGADOR.FIREFOX:
-                        string downloadDir = @"C:\Temporal\";
-                        var options = new FirefoxOptions();
+                        FirefoxOptions options = new FirefoxOptions();
                         options.AcceptInsecureCertificates = true;
+
                         options.SetPreference("browser.download.folderList", 2);
+
                         options.SetPreference("browser.download.manager.showWhenStarting", false);
-                        options.SetPreference("browser.download.panel.shown", false);
-                        options.SetPreference("browser.download.manager.useWindow", false);
-                        options.SetPreference("browser.download.dir", downloadDir);
+
                         options.SetPreference("browser.download.useDownloadDir", true);
+
                         options.SetPreference("browser.helperApps.neverAsk.saveToDisk", Constant.APP);
-                        options.BrowserExecutableLocation = @"C:\Program Files\Mozilla Firefox\firefox.exe";
+
                         options.SetPreference("pdfjs.disabled", true); // disable the built-in PDF viewer
-                        driver = new FirefoxDriver(pathGecko, options);
+                        driver = new FirefoxDriver(@"C:\Temporal", options);
                         break;
                 }
                 return driver;

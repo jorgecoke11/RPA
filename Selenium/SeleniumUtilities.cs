@@ -80,7 +80,7 @@ namespace RobotBase.Utilidades
 
             }catch(Exception exc)
             {
-                throw new Exception("No se ha podido borrar y escribir en el elemento: " + locator, exc);
+                throw exc;
             }
         }
         public void CleanAndTypeJS(By locator, string text)
@@ -94,7 +94,7 @@ namespace RobotBase.Utilidades
             }
             catch (Exception exc)
             {
-                throw new Exception("No se ha podido borrar y escribir en el elemento: " + locator, exc);
+                throw exc;
             }
 
         }
@@ -158,7 +158,7 @@ namespace RobotBase.Utilidades
             }
             catch (Exception exc)
             {
-                throw new Exception("No se ha podido hacer scroll hasta el elemento: " + locator, exc);
+                throw exc;
             }
         }
         public void MoveToElementJs(By locator, TipoWait tipoWait = TipoWait.DISPLAYED)
@@ -178,7 +178,7 @@ namespace RobotBase.Utilidades
                 actions.MoveToElement(element).Click().Build().Perform();
             }catch(Exception exc)
             {
-                throw new Exception("No se ha podido hace scroll hacia el elemento: " + locator, exc);
+                throw exc;
             }
 
         }
@@ -203,7 +203,7 @@ namespace RobotBase.Utilidades
                 element.Click();
             }catch (Exception ex)
             {
-                throw new Exception("No se ha podido hacer click en el elemento: " + element, ex);
+                throw exc;
             }
         }
         public void DoubleClickJs(IWebElement element)
@@ -214,7 +214,7 @@ namespace RobotBase.Utilidades
             }
             catch (Exception exc)
             {
-                throw new Exception("Error al hacer doble click en el elemento: " + element, exc);
+                throw exc;
             }
         }
         public void ClickJs(By locator, TipoWait tipoWait = TipoWait.DISPLAYED)
@@ -236,7 +236,7 @@ namespace RobotBase.Utilidades
                     reintentos--;
                 }
             }
-            if(reintentos < 0)
+            if(reintentos == 0)
             {
                 throw new Exception("No se ha podido hacer click con js en el elemento");
             }
@@ -346,7 +346,7 @@ namespace RobotBase.Utilidades
                     reintentos--;
                 }
             }
-            if (reintentos < 0)
+            if (reintentos == 0)
             {
                 throw new Exception("No se ha podido hacer click con js en el elemento");
             }
@@ -369,7 +369,7 @@ namespace RobotBase.Utilidades
                     reintentos--;
                 }
             }
-            if (reintentos < 0)
+            if (reintentos == 0)
             {
                 throw new Exception("No se ha podido hacer click con js en el elemento");
             }
